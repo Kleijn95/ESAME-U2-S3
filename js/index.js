@@ -36,7 +36,7 @@ fetch(URL, {
       col.classList.add("col-6", "col-md-3", "gx-2");
 
       const divCard = document.createElement("div");
-      divCard.classList.add("card", "mt-2");
+      divCard.classList.add("card", "mt-2", "shadow-lg");
 
       const cardImg = document.createElement("img");
       cardImg.classList.add("card-img-top");
