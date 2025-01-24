@@ -10,15 +10,6 @@ const isLoading = function (loadingState) {
   }
 };
 
-// Funzione per generare un messaggio di errore
-const generateAlert = function (message) {
-  const alertContainer = document.getElementById("alert-container");
-  alertContainer.innerHTML = `
-    <div class="alert alert-danger" role="alert">
-      ${message}
-    </div>`;
-};
-
 fetch(URL, {
   method: "GET",
   headers: {
@@ -86,7 +77,6 @@ fetch(URL, {
   .catch((err) => {
     isLoading(false); // Mostra lo spinner in caso di errore
     console.error(err);
-    generateAlert(err.message);
   })
   .finally(() => {
     isLoading(false);

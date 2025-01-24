@@ -1,39 +1,35 @@
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("prodId");
-console.log(productId);
+console.log(productId); // fino a riga 6 prendo l'eventuale id dall'URL e imposto variabile URL dinamica
 const URL = productId
   ? "https://striveschool-api.herokuapp.com/api/product/" + productId
   : "https://striveschool-api.herokuapp.com/api/product/";
 
 window.addEventListener("DOMContentLoaded", () => {
-  // prendiamo i riferimenti degli elementi che vogliamo manipolare
   const submitBtn = document.getElementById("submit-btn");
-  const subtitle = document.querySelector("h2 + h5");
+  const subtitle = document.querySelector("h2 + h5"); // elementi che cambieranno forma in base all'if
   const delBtn = document.getElementById("delete-btn");
 
-  // da qui in poi abbiamo un bivio
-  // il codice si autodeterminerà sulle cose da fare al caricamento della pagina
-  if (productId) {
-    // se siamo qui è perché nella URL c'era un appId (siamo in fase di modifica)
+  // creo un if che modificherà gli elementi E il fetch in base alla presenza o meno di un ID nell'URL (ovviamente mettendo DOMContentLoaded, al caricamento della pagina)
 
-    // gestione della UI in caso di modifica
+  if (productId) {
+    // multiverso in cui c'è l'ID (qui essendoci l'ID possiamo modificare(PUT) o cancellare (DELETE) un prodotto in questo caso)
+
+    // sotto modificherò quello che mi serve, in questo caso testo del bottone,il colore e il titolo del form
     submitBtn.innerText = "Modifica prodotto";
     submitBtn.classList.add("btn-secondary");
 
     subtitle.innerText = "— Modifica prodotto";
 
-    delBtn.classList.remove("d-none");
-    delBtn.onclick = handleDelete; // la funzione è definita sotto, viene solo usata come REFERENCE
-    // (così da far sapere al bottone quale funzione avviare al momento del suo click)
+    delBtn.classList.remove("d-none"); // il bottone cancella essendo nell'if con ID "perderà" la classe d-none
+    delBtn.onclick = handleDelete; // la funzione è definita sotto per ordine ma qui gli dico che onclick deve "attivare" la funzione
 
-    // gestione del reperimento del dato in caso di modifica che pre-popolerà i campi
-    // chiederò al server di darmi i dati corrispondenti all'id che abbiamo trovato arrivando su questa pagina
+    //  intanto mi faccio un get per prendere i dati del prodotto specifico (mi riferisco a quell'ID)
     fetch(URL, {
       method: "GET",
 
       headers: {
-        // questo è importante e fondamentale quando stiamo inviando il payload
-        // solo col content-type il server può capire che c'è un json da convertire
+        // solo col content-type il server può capire che c'è un json da convertire (su postman lo fa in automatico)
         "Content-Type": "application/json",
         Authorization:
           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzkzNTc2NmI3NDcwMTAwMTU4YjJhZTciLCJpYXQiOjE3Mzc3MDk0MTQsImV4cCI6MTczODkxOTAxNH0.jO_jlHxXIbH7MzCVQLgiSfhZLBCoif12IvEqZFCnDfo",
@@ -47,7 +43,7 @@ window.addEventListener("DOMContentLoaded", () => {
       .then((product) => {
         console.log(product); // il server mi ritorna l'oggetto dell'appuntamento corrispondente all'appointmentId
 
-        // sto modificando i valori dei campi input, con i DATI PRECEDENTI contenuti nell'oggetto appena ricavato dal server tramite appointmentId
+        // sto impostando i valori del prodotto agli input-field, cosi che si capisca da che base si parte
         form.elements.name.value = product.name;
         form.elements.description.value = product.description;
         form.elements.price.value = product.price;
@@ -55,10 +51,9 @@ window.addEventListener("DOMContentLoaded", () => {
         form.elements.brand.value = product.brand;
       });
   } else {
-    // se siamo qui è perché sulla barra degli indirizzi non c'era un appId e quindi siamo sul backoffice normale per la fase di creazione di una
-    // nuova risorsa (appuntamento)
+    // qui invece siamo nel multiverso in cui l'ID non c'è e quindi vorrò e potrò solo aggiungere nuovi prodotti
 
-    // gestione della UI in caso di creazione
+    // modifica del testo bottone, della classe e del titolo del form per essere "consono" all'ambiente
     submitBtn.innerText = "Aggiungi prodotto";
     submitBtn.classList.add("btn-success");
 
@@ -69,12 +64,12 @@ window.addEventListener("DOMContentLoaded", () => {
 const form = document.getElementById("product-form");
 const buttonReset = document.createElement("button");
 buttonReset.type = "button";
-buttonReset.classList.add("btn", "btn-primary", "mt-2");
+buttonReset.classList.add("btn", "btn-primary", "mt-2"); // creato bottone reset e appeso al form
 buttonReset.innerText = "Resetta form";
 buttonReset.addEventListener("click", function () {
   const hasConfirmed = confirm("Sei sicuro di voler resettare il form?");
 
-  // Se l'utente conferma, si procede con il reset del modulo
+  // usando confirm faccio uscire un alert con Si e no e in base alla scelta il form si resetta o meno
   if (hasConfirmed) {
     form.reset();
   }
@@ -86,7 +81,7 @@ form.onsubmit = function (event) {
 
   const newProduct = {
     name: form.elements.name.value,
-    description: form.elements.description.value,
+    description: form.elements.description.value, //seleziono tutti gli input da voler "mandare" al server"
     brand: form.elements.brand.value,
     imageUrl: form.elements.imageUrl.value,
     price: form.elements.price.value,
@@ -127,7 +122,6 @@ const handleDelete = () => {
 
   // se l'utente aveva confermato si procede
   if (hasConfirmed) {
-    // la URL contiene già SICURAMENTE l'id alla fine dell'indirizzo (vedi sopra)
     fetch(URL, {
       method: "DELETE",
       headers: {
