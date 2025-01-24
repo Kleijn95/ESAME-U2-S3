@@ -24,7 +24,7 @@ fetch("https://striveschool-api.herokuapp.com/api/product/" + productId, {
     container.innerHTML = `
                     <h2>${product.name}</h2>
                     <p>${product.description}</p>
-                     <img class="img-fluid" width=500px src="${product.imageUrl}" alt="${product.name}">
+                     <img class="img-fluid" width=350px src="${product.imageUrl}" alt="${product.name}">
 
                     <p class="display-6 text-primary">${product.price}€</p>
                     <a href="./backoffice.html?prodId=${product._id}" class="btn btn-success me-4 mt-2">MODIFICA PRODOTTO</a>
